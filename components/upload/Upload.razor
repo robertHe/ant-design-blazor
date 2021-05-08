@@ -3,7 +3,11 @@
 
 @using AntDesign.Internal;
 
-<span class="@ClassMapper.Class @(IsPictureCard? "ant-upload-picture-card-wrapper" : "")" style="@Style" @ref="Ref">
+<div class="@ClassMapper.Class @(IsPictureCard? "ant-upload-picture-card-wrapper" : "")" style="@Style" @ref="Ref" 
+    @ondragenter="@(e=>HandleDragHover(e,true))"
+    @ondragleave="@(e=>HandleDragHover(e,false))"
+    @ondragenter:stopPropagation
+    @ondragleave:stopPropagation>
     @if (!IsPictureCard || !ShowUploadList)
     {
         <CascadingValue Value="this" IsFixed>
@@ -176,5 +180,5 @@
             }
         </div>
     }
-</span>
+</div>
 

@@ -62,6 +62,8 @@ namespace AntDesign.Internal
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
 
+        private string TriggerEvent => Upload?.Drag == true ? "drop" : "click";
+
         private ElementReference _file;
         private ElementReference _btn;
 
@@ -84,7 +86,7 @@ namespace AntDesign.Internal
         {
             if (firstRender && !Disabled)
             {
-                await JSRuntime.InvokeVoidAsync(JSInteropConstants.AddFileClickEventListener, _btn);
+                await JSRuntime.InvokeVoidAsync(JSInteropConstants.AddFileClickEventListener, _btn, TriggerEvent);
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -94,11 +96,11 @@ namespace AntDesign.Internal
         {
             if (Disabled)
             {
-                await JSRuntime.InvokeVoidAsync(JSInteropConstants.RemoveFileClickEventListener, _btn);
+                await JSRuntime.InvokeVoidAsync(JSInteropConstants.RemoveFileClickEventListener, _btn, TriggerEvent);
             }
             else
             {
-                await JSRuntime.InvokeVoidAsync(JSInteropConstants.AddFileClickEventListener, _btn);
+                await JSRuntime.InvokeVoidAsync(JSInteropConstants.AddFileClickEventListener, _btn, TriggerEvent);
             }
         }
 
@@ -217,7 +219,7 @@ namespace AntDesign.Internal
 
         protected override void Dispose(bool disposing)
         {
-            InvokeAsync(async () => await JSRuntime.InvokeVoidAsync(JSInteropConstants.RemoveFileClickEventListener, _btn));
+            InvokeAsync(async () => await JSRuntime.InvokeVoidAsync(JSInteropConstants.RemoveFileClickEventListener, _btn, TriggerEvent));
 
             base.Dispose(disposing);
         }

@@ -51,17 +51,19 @@ function getElementAbsolutePos(element) {
   return res;
 }
 
-export function addFileClickEventListener(btn) {
+export function addFileClickEventListener(btn, event) {
   if ((btn as HTMLElement).addEventListener) {
-    (btn as HTMLElement).addEventListener("click", fileClickEvent);
+    (btn as HTMLElement).addEventListener(event, fileClickEvent);
   }
 }
 
-export function removeFileClickEventListener(btn) {
-  (btn as HTMLElement).removeEventListener("click", fileClickEvent);
+export function removeFileClickEventListener(btn, event) {
+  (btn as HTMLElement).removeEventListener(event, fileClickEvent);
 }
 
-export function fileClickEvent() {
+export function fileClickEvent(e) {
+  e.stopPropagation();
+  e.preventDefault();
   var fileId = this.attributes["data-fileid"].nodeValue;
   var element = document.getElementById(fileId);
   (element as HTMLInputElement).click();

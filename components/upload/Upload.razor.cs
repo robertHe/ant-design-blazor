@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace AntDesign
 {
@@ -84,11 +83,16 @@ namespace AntDesign
         [Parameter]
         public bool ShowButton { get; set; } = true;
 
+        [Parameter]
+        public bool Drag { get; set; }
+
         private bool IsText => ListType == "text";
         private bool IsPicture => ListType == "picture";
         private bool IsPictureCard => ListType == "picture-card";
 
         private ClassMapper _listClassMapper = new ClassMapper();
+
+        private bool _dragHover;
 
         protected override void OnInitialized()
         {
@@ -98,18 +102,31 @@ namespace AntDesign
 
             ClassMapper
                 .Add(prefixCls)
+                .If($"{prefixCls}-drag", () => Drag)
                 .If($"{prefixCls}-rtl", () => RTL);
 
             _listClassMapper
                 .Add($"{prefixCls}-list")
                 .Get(() => $"{prefixCls}-list-{ListType}")
                 .If($"{prefixCls}-list-rtl", () => RTL);
+
+            FileList.InsertRange(0, DefaultFileList);
         }
 
-        protected override Task OnInitializedAsync()
+        private void HandleDragHover(DragEventArgs args, bool hover)
         {
-            FileList.InsertRange(0, DefaultFileList);
-            return base.OnInitializedAsync();
+            Console.WriteLine($"DargEnter {hover}");
+            if (_dragHover != hover)
+            {
+                _dragHover = hover;
+                StateHasChanged();
+            }
+
+            args.DataTransfer.DropEffect = "copy";
+        }
+
+        private async Task HandleDrop()
+        {
         }
 
         private async Task RemoveFile(UploadFileItem item)
