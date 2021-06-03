@@ -1,7 +1,7 @@
 ﻿@namespace AntDesign
+@inherits AntDomComponentBase
 
-
-<div class="ant-transfer-list @((FooterTemplate != null || Footer != null)?FooterClass:"")" @onscroll="@(e=>HandleScroll(TransferDirection.Left,e))" style="@Style">
+<div class="ant-transfer-list @((FooterTemplate != null || Footer != null)?FooterClass:"")">
     <div class="ant-transfer-list-header">
         @if (ShowSelectAll)
         {
@@ -10,9 +10,9 @@
         <span class="ant-transfer-list-header-selected">
             @_leftCountText
         </span>
-        @if (Titles[0] != "")
+        @if (TitleText != "")
         {
-            <span class="ant-transfer-list-header-title">@Titles[0]</span>
+            <span class="ant-transfer-list-header-title">@TitleText</span>
         }
     </div>
     <div class="ant-transfer-list-body @(ShowSearch ? "ant-transfer-list-body-with-search" : "")">
@@ -34,7 +34,7 @@
                 </div>
             </div>
         }
-        @if (DataSource?.Any()!=true)
+        @if (DataSource?.Any() != true)
         {
             <div class="ant-transfer-list-body-not-found">
                 <Empty Simple Small />
@@ -53,15 +53,7 @@
                             }
                             else
                             {
-                                var text = Render(item);
-                                @if (text.IsT0)
-                                {
-                                    @text.AsT0
-                                }
-                                else
-                                {
-                                    @text.AsT1
-                                }
+                                @Render(item);
                             }
                         </Checkbox>
                     </li>

@@ -11,8 +11,6 @@ namespace AntDesign
     public partial class Transfer : AntDomComponentBase
     {
         private const string PrefixName = "ant-transfer";
-        private const string DisabledClass = "ant-transfer-list-content-item-disabled";
-        private const string FooterClass = "ant-transfer-list-with-footer";
 
         [Parameter]
         public IList<TransferItem> DataSource { get; set; }
@@ -67,26 +65,6 @@ namespace AntDesign
 
         private List<string> _targetKeys;
 
-        private bool _leftCheckAllState;
-        private bool _leftCheckAllIndeterminate;
-        private bool _rightCheckAllState;
-        private bool _rightCheckAllIndeterminate;
-
-        private string _leftCountText = string.Empty;
-        private string _rightCountText = string.Empty;
-
-        private bool _leftButtonDisabled = true;
-        private bool _rightButtonDisabled = true;
-
-        private IEnumerable<TransferItem> _leftDataSource;
-        private IEnumerable<TransferItem> _rightDataSource;
-
-        private List<string> _sourceSelectedKeys;
-        private List<string> _targetSelectedKeys;
-
-        private string _leftFilterValue = string.Empty;
-        private string _rightFilterValue = string.Empty;
-
         protected override void OnInitialized()
         {
             ClassMapper
@@ -95,87 +73,24 @@ namespace AntDesign
 
             _targetKeys = TargetKeys.ToList();
             var selectedKeys = SelectedKeys.ToList();
-            _sourceSelectedKeys = selectedKeys.Where(key => !_targetKeys.Contains(key)).ToList();
-            _targetSelectedKeys = selectedKeys.Where(key => _targetKeys.Contains(key)).ToList();
-            var count = _sourceSelectedKeys.Count;
-
-            InitData();
         }
 
-        private void InitData()
+        private async Task MoveItem(MouseEventArgs e, TransferDirection direction)
         {
-            _leftDataSource = DataSource.Where(a => !_targetKeys.Contains(a.Key));
-            _rightDataSource = DataSource.Where(a => _targetKeys.Contains(a.Key));
-        }
+            //var moveKeys = direction == TransferDirection.Right ? _sourceSelectedKeys : _targetSelectedKeys;
 
-        private async Task SelectItem(bool isCheck, string direction, string key)
-        {
-            var holder = direction == TransferDirection.Left ? _sourceSelectedKeys : _targetSelectedKeys;
-            var index = Array.IndexOf(holder.ToArray(), key);
+            //if (direction == TransferDirection.Left)
+            //{
+            //    _targetKeys.RemoveAll(key => moveKeys.Contains(key));
+            //}
+            //else
+            //{
+            //    _targetKeys.AddRange(moveKeys);
+            //}
 
-            if (index > -1)
-            {
-                holder.RemoveAt(index);
-            }
-            if (isCheck)
-                holder.Add(key);
+            //var oppositeDirection = direction == TransferDirection.Right ? TransferDirection.Left : TransferDirection.Right;
 
-            HandleSelect(direction, holder);
-
-            if (OnSelectChange.HasDelegate)
-            {
-                await OnSelectChange.InvokeAsync(new TransferSelectChangeArgs(_sourceSelectedKeys.ToArray(), _targetSelectedKeys.ToArray()));
-            }
-        }
-
-        private async Task SelectAll(bool isCheck, string direction)
-        {
-            var list = _leftDataSource;
-            if (direction == TransferDirection.Right)
-            {
-                list = _rightDataSource;
-            }
-
-            var holder = isCheck ? list.Where(a => !a.Disabled).Select(a => a.Key).ToList() : new List<string>(list.Count());
-
-            HandleSelect(direction, holder);
-
-            if (OnSelectChange.HasDelegate)
-            {
-                await OnSelectChange.InvokeAsync(new TransferSelectChangeArgs(_sourceSelectedKeys.ToArray(), _targetSelectedKeys.ToArray()));
-            }
-        }
-
-        private void HandleSelect(string direction, List<string> keys)
-        {
-            if (direction == TransferDirection.Left)
-            {
-                _sourceSelectedKeys = keys;
-            }
-            else
-            {
-                _targetSelectedKeys = keys;
-            }
-        }
-
-        private async Task MoveItem(MouseEventArgs e, string direction)
-        {
-            var moveKeys = direction == TransferDirection.Right ? _sourceSelectedKeys : _targetSelectedKeys;
-
-            if (direction == TransferDirection.Left)
-            {
-                _targetKeys.RemoveAll(key => moveKeys.Contains(key));
-            }
-            else
-            {
-                _targetKeys.AddRange(moveKeys);
-            }
-
-            InitData();
-
-            var oppositeDirection = direction == TransferDirection.Right ? TransferDirection.Left : TransferDirection.Right;
-
-            HandleSelect(oppositeDirection, new List<string>());
+            //HandleSelect(oppositeDirection, new List<string>());
 
             //if (!string.IsNullOrEmpty(_leftFilterValue))
             //{
@@ -187,43 +102,18 @@ namespace AntDesign
             //    await HandleSearch(new ChangeEventArgs() { Value = _rightFilterValue }, TransferDirection.Right, false);
             //}
 
-            if (OnChange.HasDelegate)
-            {
-                await OnChange.InvokeAsync(new TransferChangeArgs(_targetKeys.ToArray(), direction, moveKeys.ToArray()));
-            }
+            //if (OnChange.HasDelegate)
+            //{
+            //    await OnChange.InvokeAsync(new TransferChangeArgs(_targetKeys.ToArray(), direction, moveKeys.ToArray()));
+            //}
         }
 
-        private void CheckAllState()
-        {
-            if (_leftDataSource.Any(a => !a.Disabled))
-            {
-                _leftCheckAllState = _sourceSelectedKeys.Count == _leftDataSource.Count(a => !a.Disabled);
-            }
-            else
-            {
-                _leftCheckAllState = false;
-            }
-
-            _leftCheckAllIndeterminate = !_leftCheckAllState && _sourceSelectedKeys.Count > 0;
-
-            if (_rightDataSource.Any(a => !a.Disabled))
-            {
-                _rightCheckAllState = _targetSelectedKeys.Count == _rightDataSource.Count(a => !a.Disabled);
-            }
-            else
-            {
-                _rightCheckAllState = false;
-            }
-
-            _rightCheckAllIndeterminate = !_rightCheckAllState && _targetSelectedKeys.Count > 0;
-        }
-
-        private async Task HandleScroll(string direction, EventArgs e)
-        {
-            if (OnScroll.HasDelegate)
-            {
-                await OnScroll.InvokeAsync(new TransferScrollArgs(direction, e));
-            }
-        }
+        //private async Task HandleScroll(string direction, EventArgs e)
+        //{
+        //    if (OnScroll.HasDelegate)
+        //    {
+        //        await OnScroll.InvokeAsync(new TransferScrollArgs(direction, e));
+        //    }
+        //}
     }
 }

@@ -3,11 +3,11 @@
 
 <div class="@ClassMapper.Class" @ref="Ref">
     <CascadingValue Value="this">
-        <TransferList></TransferList>
+           <TransferList />
         <div class="ant-transfer-operation">
-            <Button Disabled="@(_leftButtonDisabled||Disabled)" Size="@AntSizeLDSType.Small" Icon="left" Type="@ButtonType.Primary" OnClick="@(e=>MoveItem(e,TransferDirection.Left))">@Operations[0]</Button>
-            <Button Disabled="@(_rightButtonDisabled||Disabled)" Size="@AntSizeLDSType.Small" Icon="right" Type="@ButtonType.Primary" OnClick="@(e=>MoveItem(e,TransferDirection.Right))">@Operations[1]</Button>
+            <Button Disabled="@(Disabled)" Size="@AntSizeLDSType.Small" Icon="left" Type="@ButtonType.Primary" OnClick="@(e=>MoveItem(e,TransferDirection.Left))">@Operations[0]</Button>
+            <Button Disabled="@(Disabled)" Size="@AntSizeLDSType.Small" Icon="right" Type="@ButtonType.Primary" OnClick="@(e=>MoveItem(e,TransferDirection.Right))">@Operations[1]</Button>
         </div>
-        <TransferList></TransferList>
+        <TransferList />
     </CascadingValue>
 </div>
